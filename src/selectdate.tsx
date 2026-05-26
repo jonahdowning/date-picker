@@ -96,6 +96,17 @@ export default function Command() {
 
   const NavigationActions = () => (
     <ActionPanel.Section title="Navigation">
+      <Action.PickDate
+        title="Jump to Date"
+        shortcut={{ modifiers: ["cmd"], key: "j" }}
+        type={Action.PickDate.Type.Date}
+        onChange={(date) => {
+          if (date) {
+            setViewDate(new Date(date.getFullYear(), date.getMonth(), 1));
+            setSelectedId(`day-${date.getDate()}`);
+          }
+        }}
+      />
       <Action title="Next Month" icon={Icon.ArrowRight} shortcut={parseShortcut(preferences.shortcutNextMonth, { modifiers: ["ctrl"], key: "n" })} onAction={() => navigate(0, 1)} />
       <Action title="Previous Month" icon={Icon.ArrowLeft} shortcut={parseShortcut(preferences.shortcutPrevMonth, { modifiers: ["ctrl"], key: "p" })} onAction={() => navigate(0, -1)} />
       <Action title="Current Month" icon={Icon.Calendar} shortcut={parseShortcut(preferences.shortcutCurrentMonth, { modifiers: ["ctrl"], key: "c" })} onAction={goToToday} />
