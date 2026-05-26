@@ -1,7 +1,7 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "date-picker",
-  "description": "Copy custom formatted dates to your clipboard",
+  "description": "Copy configurable dates to your clipboard or paste to the screen",
   "license": "MIT",
   "scripts": {
     "dev": "ray develop",
