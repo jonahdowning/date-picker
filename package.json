@@ -76,6 +76,46 @@
       "required": false,
       "title": "Preferred Format 5",
       "description": "Alternate format, accessible via ⌘+5"
+    },
+    {
+      "name": "shortcutNextMonth",
+      "type": "textfield",
+      "required": false,
+      "title": "Next Month Shortcut",
+      "description": "Navigation shortcut (e.g., ctrl+n)",
+      "default": "ctrl+n"
+    },
+    {
+      "name": "shortcutPrevMonth",
+      "type": "textfield",
+      "required": false,
+      "title": "Previous Month Shortcut",
+      "description": "Navigation shortcut (e.g., ctrl+p)",
+      "default": "ctrl+p"
+    },
+    {
+      "name": "shortcutCurrentMonth",
+      "type": "textfield",
+      "required": false,
+      "title": "Current Month Shortcut",
+      "description": "Navigation shortcut (e.g., ctrl+c)",
+      "default": "ctrl+c"
+    },
+    {
+      "name": "shortcutNextYear",
+      "type": "textfield",
+      "required": false,
+      "title": "Next Year Shortcut",
+      "description": "Navigation shortcut (e.g., ctrl+shift+n)",
+      "default": "ctrl+shift+n"
+    },
+    {
+      "name": "shortcutPrevYear",
+      "type": "textfield",
+      "required": false,
+      "title": "Previous Year Shortcut",
+      "description": "Navigation shortcut (e.g., ctrl+shift+p)",
+      "default": "ctrl+shift+p"
     }
   ],
   "title": "Date Picker",

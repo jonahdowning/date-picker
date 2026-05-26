@@ -1,4 +1,4 @@
-import { Grid, Action, ActionPanel, getPreferenceValues, closeMainWindow, popToRoot, Clipboard, showHUD, Icon, environment } from "@raycast/api";
+import { Grid, Action, ActionPanel, getPreferenceValues, closeMainWindow, popToRoot, Clipboard, showHUD, Icon, environment, Keyboard } from "@raycast/api";
 import { useState } from "react";
 
 interface Preferences {
@@ -8,6 +8,11 @@ interface Preferences {
   preferredFormat3?: string;
   preferredFormat4?: string;
   preferredFormat5?: string;
+  shortcutNextMonth?: string;
+  shortcutPrevMonth?: string;
+  shortcutCurrentMonth?: string;
+  shortcutNextYear?: string;
+  shortcutPrevYear?: string;
 }
 
 export default function Command() {
@@ -74,13 +79,28 @@ export default function Command() {
     return `data:image/svg+xml,${encodeURIComponent(svg)}`;
   };
 
+  const parseShortcut = (shortcutStr: string | undefined, defaultShortcut: Keyboard.Shortcut): Keyboard.Shortcut => {
+    if (!shortcutStr || shortcutStr.trim() === "") return defaultShortcut;
+    try {
+      const parts = shortcutStr.split("+").map((s) => s.trim());
+      const keyRaw = parts.pop() || "";
+      const modifiers = parts.map((m) => m.toLowerCase()) as Keyboard.KeyModifier[];
+      // Fallback: Ensure normal single-character keys are properly lowercased (but respect exact camelCase values like 'arrowRight')
+      const key = (keyRaw.length === 1 ? keyRaw.toLowerCase() : keyRaw) as Keyboard.KeyEquivalent;
+      if (!key) return defaultShortcut;
+      return { modifiers, key };
+    } catch {
+      return defaultShortcut;
+    }
+  };
+
   const NavigationActions = () => (
     <ActionPanel.Section title="Navigation">
-      <Action title="Next Month" icon={Icon.ArrowRight} shortcut={{ modifiers: ["ctrl"], key: "n" }} onAction={() => navigate(0, 1)} />
-      <Action title="Previous Month" icon={Icon.ArrowLeft} shortcut={{ modifiers: ["ctrl"], key: "p" }} onAction={() => navigate(0, -1)} />
-      <Action title="Current Month" icon={Icon.Calendar} shortcut={{ modifiers: ["ctrl"], key: "c" }} onAction={goToToday} />
-      <Action title="Next Year" icon={Icon.ArrowRight} shortcut={{ modifiers: ["ctrl", "shift"], key: "n" }} onAction={() => navigate(1, 0)} />
-      <Action title="Previous Year" icon={Icon.ArrowLeft} shortcut={{ modifiers: ["ctrl", "shift"], key: "p" }} onAction={() => navigate(-1, 0)} />
+      <Action title="Next Month" icon={Icon.ArrowRight} shortcut={parseShortcut(preferences.shortcutNextMonth, { modifiers: ["ctrl"], key: "n" })} onAction={() => navigate(0, 1)} />
+      <Action title="Previous Month" icon={Icon.ArrowLeft} shortcut={parseShortcut(preferences.shortcutPrevMonth, { modifiers: ["ctrl"], key: "p" })} onAction={() => navigate(0, -1)} />
+      <Action title="Current Month" icon={Icon.Calendar} shortcut={parseShortcut(preferences.shortcutCurrentMonth, { modifiers: ["ctrl"], key: "c" })} onAction={goToToday} />
+      <Action title="Next Year" icon={Icon.ArrowRight} shortcut={parseShortcut(preferences.shortcutNextYear, { modifiers: ["ctrl", "shift"], key: "n" })} onAction={() => navigate(1, 0)} />
+      <Action title="Previous Year" icon={Icon.ArrowLeft} shortcut={parseShortcut(preferences.shortcutPrevYear, { modifiers: ["ctrl", "shift"], key: "p" })} onAction={() => navigate(-1, 0)} />
     </ActionPanel.Section>
   );
 
