@@ -122,8 +122,40 @@ export default function Command() {
 
   // 1. Add column headers (Sun, Mon, Tue, etc.)
   const daysOfWeek = isMondayFirst ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  daysOfWeek.forEach((day) => {
-    items.push(<Grid.Item id={`header-${day}`} key={`header-${day}`} content={getSvgIcon(day, false, true)} actions={<ActionPanel><NavigationActions /></ActionPanel>} />);
+  daysOfWeek.forEach((day, index) => {
+    let actionName = "";
+    let actionFn = () => {};
+
+    if (index === 1) {
+      actionName = "Double-click for Previous Year";
+      actionFn = () => navigate(-1, 0);
+    } else if (index === 2) {
+      actionName = "Double-click for Previous Month";
+      actionFn = () => navigate(0, -1);
+    } else if (index === 3) {
+      actionName = "Double-click for Today";
+      actionFn = goToToday;
+    } else if (index === 4) {
+      actionName = "Double-click for Next Month";
+      actionFn = () => navigate(0, 1);
+    } else if (index === 5){
+      actionName = "Double-click for Next Year";
+      actionFn = () => navigate(1, 0);
+    }
+
+    items.push(
+      <Grid.Item
+        id={`header-${day}`}
+        key={`header-${day}`}
+        content={{ value: getSvgIcon(day, false, true), tooltip: `${actionName}` }}
+        actions={
+          <ActionPanel>
+            <Action title={actionName} onAction={actionFn} />
+            <NavigationActions />
+          </ActionPanel>
+        }
+      />
+    );
   });
 
   // 2. Add empty spacing blocks to pad the days before the 1st
