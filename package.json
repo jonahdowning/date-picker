@@ -35,12 +35,47 @@
   ],
   "preferences": [
     {
-      "name": "dateFormat",
+      "name": "defaultDateFormat",
       "type": "textfield",
       "required": false,
-      "title": "Date Format",
+      "title": "Default Date Format",
       "description": "Format for the copied date (e.g., M.d.y)",
-      "default": "M.d.y"
+      "default": "MM-dd-yyyy"
+    },
+    {
+      "name": "preferredFormat1",
+      "type": "textfield",
+      "required": false,
+      "title": "Preferred Format 1",
+      "description": "Alternate format, accessible via ⌘+1"
+    },
+    {
+      "name": "preferredFormat2",
+      "type": "textfield",
+      "required": false,
+      "title": "Preferred Format 2",
+      "description": "Alternate format, accessible via ⌘+2"
+    },
+    {
+      "name": "preferredFormat3",
+      "type": "textfield",
+      "required": false,
+      "title": "Preferred Format 3",
+      "description": "Alternate format, accessible via ⌘+3"
+    },
+    {
+      "name": "preferredFormat4",
+      "type": "textfield",
+      "required": false,
+      "title": "Preferred Format 4",
+      "description": "Alternate format, accessible via ⌘+4"
+    },
+    {
+      "name": "preferredFormat5",
+      "type": "textfield",
+      "required": false,
+      "title": "Preferred Format 5",
+      "description": "Alternate format, accessible via ⌘+5"
     }
   ],
   "title": "Date Picker",
