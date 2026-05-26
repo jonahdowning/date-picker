@@ -35,6 +35,24 @@
   ],
   "preferences": [
     {
+      "name": "startOfWeek",
+      "type": "dropdown",
+      "required": false,
+      "title": "Start of Week",
+      "description": "Choose which day the week starts on",
+      "default": "sunday",
+      "data": [
+        {
+          "title": "Sunday",
+          "value": "sunday"
+        },
+        {
+          "title": "Monday",
+          "value": "monday"
+        }
+      ]
+    },
+    {
       "name": "defaultDateFormat",
       "type": "textfield",
       "required": false,

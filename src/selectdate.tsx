@@ -13,6 +13,7 @@ interface Preferences {
   shortcutCurrentMonth?: string;
   shortcutNextYear?: string;
   shortcutPrevYear?: string;
+  startOfWeek: string;
 }
 
 export default function Command() {
@@ -28,7 +29,9 @@ export default function Command() {
 
   // Calculate calendar variables for the current month
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const firstDayOfMonth = new Date(year, month, 1).getDay();
+  const standardFirstDay = new Date(year, month, 1).getDay();
+  const isMondayFirst = preferences.startOfWeek === "monday";
+  const firstDayOfMonthOffset = isMondayFirst ? (standardFirstDay + 6) % 7 : standardFirstDay;
 
   const navigate = (yearOffset: number, monthOffset: number) => {
     const newDate = new Date(year + yearOffset, month + monthOffset, 1);
@@ -118,13 +121,13 @@ export default function Command() {
   const items: JSX.Element[] = [];
 
   // 1. Add column headers (Sun, Mon, Tue, etc.)
-  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const daysOfWeek = isMondayFirst ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   daysOfWeek.forEach((day) => {
     items.push(<Grid.Item id={`header-${day}`} key={`header-${day}`} content={getSvgIcon(day, false, true)} actions={<ActionPanel><NavigationActions /></ActionPanel>} />);
   });
 
   // 2. Add empty spacing blocks to pad the days before the 1st
-  for (let i = 0; i < firstDayOfMonth; i++) {
+  for (let i = 0; i < firstDayOfMonthOffset; i++) {
     const emptySvg = `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 90"></svg>')}`;
     items.push(<Grid.Item id={`empty-${i}`} key={`empty-${i}`} content={emptySvg} actions={<ActionPanel><NavigationActions /></ActionPanel>} />);
   }
