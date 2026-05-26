@@ -14,12 +14,28 @@ export default function Command() {
   const preferences = getPreferenceValues<Preferences>();
 
   const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
+
+  const [viewDate, setViewDate] = useState(new Date());
+  const [selectedId, setSelectedId] = useState<string | null>(`day-${today.getDate()}`);
+
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
 
   // Calculate calendar variables for the current month
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDayOfMonth = new Date(year, month, 1).getDay();
+
+  const navigate = (yearOffset: number, monthOffset: number) => {
+    const newDate = new Date(year + yearOffset, month + monthOffset, 1);
+    setViewDate(newDate);
+    const isCurrentMonth = newDate.getFullYear() === today.getFullYear() && newDate.getMonth() === today.getMonth();
+    setSelectedId(isCurrentMonth ? `day-${today.getDate()}` : "day-1");
+  };
+
+  const goToToday = () => {
+    setViewDate(new Date());
+    setSelectedId(`day-${today.getDate()}`);
+  };
 
   // Simple formatting helper function for custom mappings
   const formatDate = (date: Date, formatStr: string) => {
@@ -58,21 +74,29 @@ export default function Command() {
     return `data:image/svg+xml,${encodeURIComponent(svg)}`;
   };
 
+  const NavigationActions = () => (
+    <ActionPanel.Section title="Navigation">
+      <Action title="Next Month" icon={Icon.ArrowRight} shortcut={{ modifiers: ["ctrl"], key: "n" }} onAction={() => navigate(0, 1)} />
+      <Action title="Previous Month" icon={Icon.ArrowLeft} shortcut={{ modifiers: ["ctrl"], key: "p" }} onAction={() => navigate(0, -1)} />
+      <Action title="Current Month" icon={Icon.Calendar} shortcut={{ modifiers: ["ctrl"], key: "c" }} onAction={goToToday} />
+      <Action title="Next Year" icon={Icon.ArrowRight} shortcut={{ modifiers: ["ctrl", "shift"], key: "n" }} onAction={() => navigate(1, 0)} />
+      <Action title="Previous Year" icon={Icon.ArrowLeft} shortcut={{ modifiers: ["ctrl", "shift"], key: "p" }} onAction={() => navigate(-1, 0)} />
+    </ActionPanel.Section>
+  );
+
   const items: JSX.Element[] = [];
 
   // 1. Add column headers (Sun, Mon, Tue, etc.)
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   daysOfWeek.forEach((day) => {
-    items.push(<Grid.Item id={`header-${day}`} key={`header-${day}`} content={getSvgIcon(day, false, true)} />);
+    items.push(<Grid.Item id={`header-${day}`} key={`header-${day}`} content={getSvgIcon(day, false, true)} actions={<ActionPanel><NavigationActions /></ActionPanel>} />);
   });
 
   // 2. Add empty spacing blocks to pad the days before the 1st
   for (let i = 0; i < firstDayOfMonth; i++) {
     const emptySvg = `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 90"></svg>')}`;
-    items.push(<Grid.Item id={`empty-${i}`} key={`empty-${i}`} content={emptySvg} />);
+    items.push(<Grid.Item id={`empty-${i}`} key={`empty-${i}`} content={emptySvg} actions={<ActionPanel><NavigationActions /></ActionPanel>} />);
   }
-
-  let todayId = "";
 
   // 3. Populate the actual days of the current month
   for (let day = 1; day <= daysInMonth; day++) {
@@ -80,8 +104,6 @@ export default function Command() {
     const isToday = date.toDateString() === today.toDateString();
     const formattedDate = formatDate(date, preferences.defaultDateFormat || "MM-dd-yyyy");
     const id = `day-${day}`;
-
-    if (isToday) todayId = id; // Store ID to automatically focus on it
 
     items.push(
       <Grid.Item
@@ -131,13 +153,12 @@ export default function Command() {
                 />
               )}
             </ActionPanel.Section>
+            <NavigationActions />
           </ActionPanel>
         }
       />
     );
   }
-
-  const [selectedId, setSelectedId] = useState<string | null>(todayId);
 
   return (
     <Grid
@@ -150,7 +171,7 @@ export default function Command() {
       selectedItemId={selectedId || undefined}
       onSelectionChange={(id) => setSelectedId(id)}
     >
-      <Grid.Section title={today.toLocaleString("default", { month: "long", year: "numeric" })}>
+      <Grid.Section title={viewDate.toLocaleString("default", { month: "long", year: "numeric" })}>
         {items}
       </Grid.Section>
     </Grid>
